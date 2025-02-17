@@ -24,5 +24,20 @@ jobs:
           docker build -t ${DOCKER_USERNAME}/${NAME}:1 .
           docker push ${DOCKER_USERNAME}/${NAME}:1
 
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+
       - name: Deploy to Kubernetes
-        run: kubectl apply -f deployment.yaml
+        run: | 
+            kubectl apply -f deployment.yaml
+            kubectl apply -f service.yaml
+            kubectl apply -f ingress.yaml
+      - name: Verify Deployment
+        run: kubectl get pods,svc,ingress
