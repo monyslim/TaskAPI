@@ -39,6 +39,11 @@ jobs:
           kubectl config use-context minikube
           kubectl cluster-info
           kubectl get nodes
+      - name: Add monyslim.online to /etc/hosts
+        run: |
+            MINIKUBE_IP=$(minikube ip)
+            echo "$MINIKUBE_IP monyslim.online" | sudo tee -a /etc/hosts
+            echo "Updated /etc/hosts with Minikube IP: $MINIKUBE_IP"
 
       - name: Deploy to Minikube
         run: | 

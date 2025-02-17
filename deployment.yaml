@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: task-api
-        image: monyslim/task-api:40bbf8b # Replace with your DockerHub username
+        image: monyslim/task-api:1.0.0 # Replace with your DockerHub username
         ports:
         - containerPort: 8000
         imagePullPolicy: IfNotPresent
