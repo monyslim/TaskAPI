@@ -22,7 +22,7 @@ jobs:
         run: |
           IMAGE_TAG=${GITHUB_SHA::7}  # Shorten SHA for unique tagging
           docker build -t ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG} .
-          docker tag ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG} ${DOCKER_USERNAME}/${NAME}:latest
+          docker tag ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG} ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG}
           docker push ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG}
           docker push ${DOCKER_USERNAME}/${NAME}:latest
 
@@ -49,11 +49,7 @@ jobs:
       - name: Wait for Pods to be Ready
         run: |
           echo "Waiting for pods to be in Running state..."
-          while [[ $(kubectl get pods -n default --field-selector=status.phase!=Running | wc -l) -gt 1 ]]; do
-            echo "Still waiting for pods..."
-            kubectl get pods -n default
-            sleep 10
-          done
+          kubectl wait --for=condition=ready pod --all --timeout=300s
           echo "All pods are running!"
 
       - name: Wait for Services to be Ready

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: task-api
 spec:
-  replicas: 2  # Number of replicas for scalability
+  replicas: 1  # Number of replicas for scalability
   selector:
     matchLabels:
       app: task-api
@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
       - name: task-api
-        image: your-dockerhub-username/task-api:latest  # Replace with your DockerHub username
+        image: monyslim/task-api:40bbf8b # Replace with your DockerHub username
         ports:
         - containerPort: 8000
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
 
 ---
 apiVersion: v1
@@ -32,3 +32,4 @@ spec:
     - protocol: TCP
       port: 80    # Exposed port
       targetPort: 8000  # Container port
+
