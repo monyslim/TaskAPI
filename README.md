@@ -42,7 +42,7 @@ Task/
 | `PUT`    | `/tasks/{id}`   | Update a task          |
 | `DELETE` | `/tasks/{id}`   | Delete a task          |
 
-### ✅ API Request/Response Examples
+### API Request/Response Examples
 #### Create Task
 ```json
 POST /tasks/
@@ -205,7 +205,7 @@ spec:
 
 ---
 
-## 🚀 Deployment Instructions
+##  Deployment Instructions
 ### Run Locally with Docker
 ```bash
 docker build -t task-api .
@@ -257,7 +257,7 @@ Pushes it to DockerHub
 Deploys the app to Kubernetes
 - Trigger: Every push to the *master* branch.
 
-## ✅ Fix: Ensure Kubernetes Context Is Set in GitHub Actions
+## Fix: Ensure Kubernetes Context Is Set in GitHub Actions
 - If deploying to **AWS EKS**, modify the workflow like this:
 ```yaml
       - name: Configure AWS Credentials
@@ -273,11 +273,30 @@ Deploys the app to Kubernetes
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
+          kubectl apply -f ingress.yaml
+```
+---
+- If deploying to **Azure AKS**, use this:
+```yaml
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS Credentials
+        run: az aks get-credentials --resource-group YOUR_RESOURCE_GROUP --name YOUR_AKS_CLUSTER_NAME
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f deployment.yaml
           kubectl apply -f ingress.yaml
 ```
 
-- If deploying to **Azure AKS**, use this:
+## Final Steps
+1. Add the correct authentication method to your GitHub Actions.
+2. Store the necessary credentials in GitHub Secrets.
+3. Push the changes and re-run the workflow.
+
 
 ## 🎯 Conclusion
 ✅ FastAPI-based Task Manager  
