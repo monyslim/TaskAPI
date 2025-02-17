@@ -46,13 +46,32 @@ jobs:
         run: | 
           kubectl apply -f deployment.yaml
           kubectl apply -f ingress.yaml
+      - name: Wait for Pods to be Ready
+        run: |
+          echo "Waiting for pods to be in Running state..."
+          while [[ $(kubectl get pods -n default --field-selector=status.phase!=Running | wc -l) -gt 1 ]]; do
+            echo "Still waiting for pods..."
+            kubectl get pods -n default
+            sleep 10
+          done
+          echo "All pods are running!"
+
+      - name: Wait for Services to be Ready
+        run: |
+          echo "Waiting for services to be assigned an EXTERNAL-IP..."
+          while [[ $(kubectl get svc -n default | grep task-api-service | awk '{print $4}') == "<pending>" ]]; do
+            echo "Still waiting for External IP..."
+            kubectl get svc -n default
+            sleep 10
+          done
+          echo "Service is ready!"
 
       - name: Verify Deployment
         run: |
           kubectl get pods -A
           kubectl get svc -A
           kubectl get ingress -A
-
+  
       - name: Clean up Minikube
         run: |
           minikube delete   

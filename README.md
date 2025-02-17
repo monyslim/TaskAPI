@@ -127,6 +127,18 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
 ```
 
+## Install Dependcies
+- Make sure you have Python and *pip* installed.
+```
+pip install -r requirements.txt
+```
+
+## Run locally
+```
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+- The API will be available at: http://127.0.0.1:8000/docs
+
 ---
 
 ## 🐳 Docker Setup
@@ -229,11 +241,43 @@ For cloud-based Kubernetes (AWS/GKE/AKS), check the external IP:
 ```bash
 kubectl get services
 ```
+
 Then access:
 ```
 http://<EXTERNAL-IP>/docs
 ```
 ---
+
+## 🔄 CI/CD Deployment
+GitHub Actions Workflow
+The project includes an automation pipeline that:
+
+Builds the Docker image
+Pushes it to DockerHub
+Deploys the app to Kubernetes
+- Trigger: Every push to the *master* branch.
+
+## ✅ Fix: Ensure Kubernetes Context Is Set in GitHub Actions
+- If deploying to **AWS EKS**, modify the workflow like this:
+```yaml
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Change to your AWS region
+
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name YOUR_EKS_CLUSTER_NAME --region us-east-1
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
+          kubectl apply -f ingress.yaml
+```
+
+- If deploying to **Azure AKS**, use this:
 
 ## 🎯 Conclusion
 ✅ FastAPI-based Task Manager  
