@@ -44,6 +44,11 @@ jobs:
             MINIKUBE_IP=$(minikube ip)
             echo "$MINIKUBE_IP monyslim.online" | sudo tee -a /etc/hosts
             echo "Updated /etc/hosts with Minikube IP: $MINIKUBE_IP"
+      - name: Enable Minikube Ingress
+        run: |
+              minikube addons enable ingress
+              sleep 30  # Give some time for the ingress controller to start
+              kubectl get pods -n kube-system | grep ingress
 
       - name: Deploy to Minikube
         run: | 

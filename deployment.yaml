@@ -17,7 +17,7 @@ spec:
         image: monyslim/task-api:1.0.0 # Replace with your DockerHub username
         ports:
         - containerPort: 8000
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
 
 ---
 apiVersion: v1
