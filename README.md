@@ -206,20 +206,17 @@ spec:
 ---
 
 ##  Deployment Instructions
-### Run Locally with Docker
+- build the image
 ```bash
 docker build -t task-api .
+```
+### Run Locally with Docker
+```bash
 docker run -p 8000:8000 task-api
 ```
 Access API: **http://localhost:8000/docs**
 
 ### Deploy to Kubernetes
-#### Build & Push Docker Image
-```bash
-docker build -t your-dockerhub-username/task-api:latest .
-docker login
-docker push your-dockerhub-username/task-api:latest
-```
 
 #### Apply Kubernetes Configurations
 ```bash
@@ -252,10 +249,10 @@ http://<EXTERNAL-IP>/docs
 GitHub Actions Workflow
 The project includes an automation pipeline that:
 
-Builds the Docker image
-Pushes it to DockerHub
-Deploys the app to Kubernetes
-- Trigger: Every push to the *master* branch.
+1. Builds the Docker image
+2. Pushes it to DockerHub
+3. Deploys the app to Kubernetes
+- Trigger: Every push to the **master** branch.
 
 ## Fix: Ensure Kubernetes Context Is Set in GitHub Actions
 - If deploying to **AWS EKS**, modify the workflow like this:
