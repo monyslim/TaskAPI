@@ -25,10 +25,10 @@ kind: Service
 metadata:
   name: task-api-service
 spec:
+  type: LoadBalancer  # Change to NodePort if using Minikube
   selector:
     app: task-api
   ports:
     - protocol: TCP
       port: 80    # Exposed port
       targetPort: 8000  # Container port
-  type: LoadBalancer  # Change to NodePort if using Minikube

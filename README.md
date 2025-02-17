@@ -233,12 +233,17 @@ Then access:
 ```
 http://<EXTERNAL-IP>/docs
 ```
-
 ---
 
 ## 🎯 Conclusion
 ✅ FastAPI-based Task Manager  
 ✅ Dockerized for containerization  
 ✅ Deployed on Kubernetes  
+
+
+🔗 Contact
+Author: David
+GitHub: monyslim
+Email: dewcapon@ymail.com
 
 🚀😊

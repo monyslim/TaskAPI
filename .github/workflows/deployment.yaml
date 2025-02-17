@@ -1,0 +1,28 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and Push Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          NAME: task-api
+        run: |
+          docker build -t ${DOCKER_USERNAME}/${NAME}:1 .
+          docker push ${DOCKER_USERNAME}/${NAME}:1
+
+      - name: Deploy to Kubernetes
+        run: kubectl apply -f deployment.yaml
