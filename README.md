@@ -172,7 +172,7 @@ kind: Deployment
 metadata:
   name: task-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: task-api

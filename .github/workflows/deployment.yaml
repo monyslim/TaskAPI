@@ -20,10 +20,8 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           NAME: task-api
         run: |
-          IMAGE_TAG=${GITHUB_SHA::7}  # Shorten SHA for unique tagging
+          IMAGE_TAG=1.0.0
           docker build -t ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG} .
-          docker tag ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG} ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG}
-          docker push ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG}
           docker push ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG}
 
       - name: Install Minikube
