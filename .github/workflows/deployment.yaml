@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Login to DockerHub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -18,26 +18,42 @@ jobs:
       - name: Build and Push Docker Image
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           NAME: task-api
         run: |
-          docker build -t ${DOCKER_USERNAME}/${NAME}:1 .
-          docker push ${DOCKER_USERNAME}/${NAME}:1
+          IMAGE_TAG=${GITHUB_SHA::7}  # Shorten SHA for unique tagging
+          docker build -t ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG} .
+          docker tag ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG} ${DOCKER_USERNAME}/${NAME}:latest
+          docker push ${DOCKER_USERNAME}/${NAME}:${IMAGE_TAG}
+          docker push ${DOCKER_USERNAME}/${NAME}:latest
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Configure kubectl
+      - name: Install Minikube
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
-      - name: Deploy to Kubernetes
+      - name: Start Minikube
+        run: |
+          minikube start --driver=docker
+          minikube status
+
+      - name: Configure kubectl for Minikube
+        run: |
+          kubectl config use-context minikube
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Deploy to Minikube
         run: | 
-            kubectl apply -f deployment.yaml
-            kubectl apply -f service.yaml
-            kubectl apply -f ingress.yaml
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
+          kubectl apply -f ingress.yaml
+
       - name: Verify Deployment
-        run: kubectl get pods,svc,ingress
+        run: |
+          kubectl get pods -A
+          kubectl get svc -A
+          kubectl get ingress -A
+
+      - name: Clean up Minikube
+        run: |
+          minikube delete   
