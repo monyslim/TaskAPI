@@ -47,7 +47,7 @@ jobs:
       - name: Enable Minikube Ingress
         run: |
               minikube addons enable ingress
-              sleep 30  # Give some time for the ingress controller to start
+              sleep 10  # Give some time for the ingress controller to start
               kubectl get pods -n kube-system | grep ingress
 
       - name: Deploy to Minikube
