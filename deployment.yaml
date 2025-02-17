@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-api
+spec:
+  replicas: 2  # Number of replicas for scalability
+  selector:
+    matchLabels:
+      app: task-api
+  template:
+    metadata:
+      labels:
+        app: task-api
+    spec:
+      containers:
+      - name: task-api
+        image: your-dockerhub-username/task-api:latest  # Replace with your DockerHub username
+        ports:
+        - containerPort: 8000
+        imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-api-service
+spec:
+  selector:
+    app: task-api
+  ports:
+    - protocol: TCP
+      port: 80    # Exposed port
+      targetPort: 8000  # Container port
+  type: LoadBalancer  # Change to NodePort if using Minikube
